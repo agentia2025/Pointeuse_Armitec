@@ -24,10 +24,31 @@
   </label>
   <label>Type d'intervention:
     <select id="intervention">
+      <option>Usinage</option>
+      <option>Maintenance</option>
+    </select>
+  </label>
+  <label>Pointage OF:
+    <input type="text" id="of" placeholder="N° OF ou référence">
+  </label>
+  <label>Option 1:
+    <select id="option1">
       <option>Zone</option>
       <option>1/2 Zone</option>
+      <option>Rien</option>
+    </select>
+  </label>
+  <label>Option 2:
+    <select id="option2">
       <option>Astreinte</option>
-      <option>Autre</option>
+      <option>Non</option>
+    </select>
+  </label>
+  <label>Option 3:
+    <select id="option3">
+      <option value="">-- Choisir --</option>
+      <option>Option A</option>
+      <option>Option B</option>
     </select>
   </label>
   <button onclick="envoyerPointage()">Pointer</button>
@@ -38,6 +59,10 @@
       const identifiant = document.getElementById('identifiant').value;
       const type_pointage = document.getElementById('type_pointage').value;
       const intervention = document.getElementById('intervention').value;
+      const of = document.getElementById('of').value;
+      const option1 = document.getElementById('option1').value;
+      const option2 = document.getElementById('option2').value;
+      const option3 = document.getElementById('option3').value;
       const message = document.getElementById('message');
 
       if (!identifiant) {
@@ -56,12 +81,16 @@
           identifiant,
           type_pointage,
           intervention,
+          of,
+          option1,
+          option2,
+          option3,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           timestamp: new Date().toISOString()
         };
 
-        const url = "[https://script.google.com/macros/s/AKfycbw76kIePfZRmp_4u_QPOEPEuCasF9tnh4PLAnzpZYcLbUQsulS3gBtW5s9cuXcishtH/exec]"; // À remplacer avec l'URL de ton Apps Script
+        const url = "[TON_URL_APPS_SCRIPT]";
 
         const res = await fetch(url, {
           method: "POST",
@@ -77,3 +106,4 @@
   </script>
 </body>
 </html>
+
