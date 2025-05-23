@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pointeuse GPS - Armitec</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 500px; margin: auto; }
+    label { display: block; margin-top: 1em; }
+    button { margin-top: 2em; padding: 0.5em 1em; font-size: 1em; }
+    .message { margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Pointeuse GPS Armitec</h2>
+  <label>Identifiant salarié:
+    <input type="text" id="identifiant" required>
+  </label>
+  <label>Type de pointage:
+    <select id="type_pointage">
+      <option>Début</option>
+      <option>Fin</option>
+    </select>
+  </label>
+  <label>Type d'intervention:
+    <select id="intervention">
+      <option>Zone</option>
+      <option>1/2 Zone</option>
+      <option>Astreinte</option>
+      <option>Autre</option>
+    </select>
+  </label>
+  <button onclick="envoyerPointage()">Pointer</button>
+  <div class="message" id="message"></div>
+
+  <script>
+    async function envoyerPointage() {
+      const identifiant = document.getElementById('identifiant').value;
+      const type_pointage = document.getElementById('type_pointage').value;
+      const intervention = document.getElementById('intervention').value;
+      const message = document.getElementById('message');
+
+      if (!identifiant) {
+        message.textContent = 'Veuillez saisir votre identifiant.';
+        return;
+      }
+
+      message.textContent = 'Géolocalisation en cours...';
+      if (!navigator.geolocation) {
+        message.textContent = 'La géolocalisation n’est pas supportée par ce navigateur.';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const data = {
+          identifiant,
+          type_pointage,
+          intervention,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          timestamp: new Date().toISOString()
+        };
+
+        const url = "[https://script.google.com/macros/s/AKfycbw76kIePfZRmp_4u_QPOEPEuCasF9tnh4PLAnzpZYcLbUQsulS3gBtW5s9cuXcishtH/exec]"; // À remplacer avec l'URL de ton Apps Script
+
+        const res = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
+        const result = await res.text();
+        message.textContent = result;
+      }, (error) => {
+        message.textContent = "Erreur de géolocalisation : " + error.message;
+      });
+    }
+  </script>
+</body>
+</html>
