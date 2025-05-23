@@ -9,43 +9,44 @@
     label { display: block; margin-top: 1em; }
     button { margin-top: 2em; padding: 0.5em 1em; font-size: 1em; }
     .message { margin-top: 1em; font-weight: bold; }
+    .coordonnees { margin-top: 0.5em; font-size: 0.9em; color: #444; }
   </style>
 </head>
 <body>
   <h2>Pointeuse GPS Armitec</h2>
-  <label>Identifiant salarié:
-    <input type="text" id="identifiant" required>
+  <label for="identifiant">Identifiant salarié:
+    <input type="text" id="identifiant" name="identifiant" required>
   </label>
-  <label>Type de pointage:
-    <select id="type_pointage">
+  <label for="type_pointage">Type de pointage:
+    <select id="type_pointage" name="type_pointage">
       <option>Début</option>
       <option>Fin</option>
     </select>
   </label>
-  <label>Type d'intervention:
-    <select id="intervention">
+  <label for="intervention">Type d'intervention:
+    <select id="intervention" name="intervention">
       <option>Usinage</option>
       <option>Maintenance</option>
     </select>
   </label>
-  <label>Pointage OF:
-    <input type="text" id="of" placeholder="N° OF ou référence">
+  <label for="of">Pointage OF:
+    <input type="text" id="of" name="of" placeholder="N° OF ou référence">
   </label>
-  <label>Option 1:
-    <select id="option1">
+  <label for="option1">Option 1:
+    <select id="option1" name="option1">
       <option>Zone</option>
       <option>1/2 Zone</option>
       <option>Rien</option>
     </select>
   </label>
-  <label>Option 2:
-    <select id="option2">
+  <label for="option2">Option 2:
+    <select id="option2" name="option2">
       <option>Astreinte</option>
       <option>Non</option>
     </select>
   </label>
-  <label>Option 3:
-    <select id="option3">
+  <label for="option3">Option 3:
+    <select id="option3" name="option3">
       <option value="">-- Choisir --</option>
       <option>Option A</option>
       <option>Option B</option>
@@ -53,6 +54,7 @@
   </label>
   <button onclick="envoyerPointage()">Pointer</button>
   <div class="message" id="message"></div>
+  <div class="coordonnees" id="coordonnees"></div>
 
   <script>
     async function envoyerPointage() {
@@ -64,6 +66,7 @@
       const option2 = document.getElementById('option2').value;
       const option3 = document.getElementById('option3').value;
       const message = document.getElementById('message');
+      const coordonnees = document.getElementById('coordonnees');
 
       if (!identifiant) {
         message.textContent = 'Veuillez saisir votre identifiant.';
@@ -77,6 +80,10 @@
       }
 
       navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        coordonnees.textContent = `Coordonnées : ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
         const data = {
           identifiant,
           type_pointage,
@@ -85,20 +92,24 @@
           option1,
           option2,
           option3,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
+          latitude: lat,
+          longitude: lon,
           timestamp: new Date().toISOString()
         };
 
-        const url = "[https://script.google.com/macros/s/AKfycbwuOjUC5zMMBeuH51roe6f1rvuRVKrmddqRh9bnTfibRSN9ueF5VqdN-aZlkaDuc10x/exec]";
+        const url = "https://script.google.com/macros/s/AKfycbwuOjUC5zMMBeuH51roe6f1rvuRVKrmddqRh9bnTfibRSN9ueF5VqdN-aZlkaDuc10x/exec";
 
-        const res = await fetch(url, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        });
-        const result = await res.text();
-        message.textContent = result;
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+          });
+          const result = await res.text();
+          message.textContent = result;
+        } catch (err) {
+          message.textContent = "Erreur de communication : " + err.message;
+        }
       }, (error) => {
         message.textContent = "Erreur de géolocalisation : " + error.message;
       });
@@ -106,4 +117,3 @@
   </script>
 </body>
 </html>
-
