@@ -51,6 +51,20 @@
       <option>Option A</option>
       <option>Option B</option>
     </select>
+    </label>
+  <label for="option4">Option 4:
+    <select id="option4" name="option4">
+      <option value="">-- Choisir --</option>
+      <option>Option A</option>
+      <option>Option B</option>
+    </select>
+    </label>
+  <label for="option5">Option 5:
+    <select id="option5" name="option5">
+      <option value="">-- Choisir --</option>
+      <option>Option A</option>
+      <option>Option B</option>
+    </select>
   </label>
   <button onclick="envoyerPointage()">Pointer</button>
   <div class="message" id="message"></div>
@@ -65,6 +79,8 @@
       const option1 = document.getElementById('option1').value;
       const option2 = document.getElementById('option2').value;
       const option3 = document.getElementById('option3').value;
+      const option4 = document.getElementById('option4').value;
+      const option5 = document.getElementById('option5').value;
       const message = document.getElementById('message');
       const coordonnees = document.getElementById('coordonnees');
 
@@ -92,6 +108,8 @@
           option1,
           option2,
           option3,
+          option4,
+          option5,
           latitude: lat,
           longitude: lon,
           timestamp: new Date().toISOString()
